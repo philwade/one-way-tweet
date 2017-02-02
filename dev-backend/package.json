@@ -1,0 +1,16 @@
+{
+  "name": "dev-backend",
+  "version": "0.0.1",
+  "description": "Simple oauth backend for dev purposes",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^3.4.7",
+    "express": "^4.14.1",
+    "node-twitter-api": "^1.8.0"
+  }
+}
