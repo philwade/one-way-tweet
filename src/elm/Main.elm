@@ -3,26 +3,37 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing ( onClick )
 import Components.Twitter exposing (auth)
+import QueryString exposing (parse, one, string)
 
 -- APP
-main : Program Never Int Msg
+main : Program Flags Model Msg
 main =
-  Html.program { init = init, view = view, update = update, subscriptions = subscriptions }
+  Html.programWithFlags { init = init, view = view, update = update, subscriptions = subscriptions }
 
 -- MODEL
-init : (Model, Cmd Msg)
-init = (0, Cmd.none)
+init : Flags -> (Model, Cmd Msg)
+init flags =
+    let
+        params = parse flags.query
+        token = one string "oauth_token" params
+        verifier = one string "oauth_verifier" params
+    in
+        (Model token verifier, Cmd.none)
 
-type alias Model = Int
+type alias Flags = { query : String
+}
+
+type alias Model = { token : Maybe String
+                   , verifier : Maybe String
+                   }
 
 -- UPDATE
-type Msg = Auth | Increment
+type Msg = Auth
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     Auth -> (model, auth "123")
-    Increment -> (model + 1, Cmd.none)
 
 subscriptions : Model -> Sub Msg
 subscriptions model = Sub.none

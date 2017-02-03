@@ -64,6 +64,12 @@ if ( TARGET_ENV === 'development' ) {
       // serve index.html in place of 404 responses
       historyApiFallback: true,
       contentBase: './src',
+	  proxy: {
+		'/api/**' : {
+			target: 'http://localhost:5000',
+			pathRewrite: function(path) { return path.replace(/^\/[^\/]+\//, '')}
+		}
+	  }
     },
 
     module: {
