@@ -2,8 +2,9 @@ module Main exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing ( onClick )
-import Components.Twitter exposing (auth, getToken)
+import Components.Twitter exposing (auth, getToken, postTweet)
 import QueryString exposing (parse, one, string)
+import Components.Message exposing (Msg(..))
 
 -- APP
 main : Program Flags Model Msg
@@ -19,23 +20,23 @@ init flags =
     in
         case authPair of
             (Just token, Just verifier) ->
-                (Model (Just token) (Just verifier), getToken (token, verifier))
-            _ -> (Model Nothing Nothing, Cmd.none)
+                (Model (Just token) (Just verifier) False, getToken (token, verifier))
+            _ -> (Model Nothing Nothing False, Cmd.none)
 
 type alias Flags = { query : String
 }
 
 type alias Model = { token : Maybe String
                    , verifier : Maybe String
+                   , loading : Bool
                    }
-
--- UPDATE
-type Msg = Auth
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
-    Auth -> (model, auth "123")
+    TryAuth -> (model, auth "")
+    AuthSuccess -> (model, Cmd.none)
+    SendTweet -> ({ model | loading = True}, postTweet "placeholder")
 
 subscriptions : Model -> Sub Msg
 subscriptions model = Sub.none
@@ -49,7 +50,7 @@ view model =
   div [ class "container", style [("margin-top", "30px"), ( "text-align", "center" )] ][    -- inline CSS (literal)
     div [ class "row" ][
       div [ class "col-xs-12" ][
-          button [ class "btn btn-primary btn-lg", onClick Auth ] [                  -- click handler
+          button [ class "btn btn-primary btn-lg", onClick TryAuth ] [                  -- click handler
             span[ class "glyphicon glyphicon-star" ][]                                      -- glyphicon
             , span[][ text "Sign into your twitter!" ]
           ]

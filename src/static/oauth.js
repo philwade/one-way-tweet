@@ -16,11 +16,20 @@ var getToken = function (authPair) {
 	});
 }
 
+var postTweet = function(status) {
+	$.get('/api/post-status', {
+		status
+	}, function(res) {
+		console.log(res);
+	});
+}
+
 if ( typeof define === "function" && define.amd ) {
 	define( "oauth", [], function() {
 		return {
 			initialAuth,
-			getToken
+			getToken,
+			postTweet
 		}
 	} );
 }

@@ -4,3 +4,4 @@ port auth : String -> Cmd msg
 
 type alias TokenBundle = (String, String)
 port getToken : TokenBundle -> Cmd msg
+port postTweet : String -> Cmd msg

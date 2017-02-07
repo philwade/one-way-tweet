@@ -13,11 +13,12 @@ var twitter = new Twitter({
 
 var app = express();
 
-var _requestSecret;
+var _requestSecret,
+	_accessToken,
+	_accessSecret;
 
 app.get("/request-auth", function(req, res) {
 	twitter.getRequestToken(function(err, requestToken, requestSecret) {
-		console.log(arguments);
 		if (err)
 			res.status(500).send(err);
 		else {
@@ -39,9 +40,30 @@ app.get("/request-token", function(req, res) {
 				if (err)
 					res.status(500).send(err);
 				else
+					_accessToken = accessToken;
+					_accessSecret = accessSecret;
 					res.send(user);
 			});
 	});
+});
+
+app.get("/post-status", function(req, res) {
+	var statusContent = req.query.status;
+
+	twitter.statuses("update", {
+			status: statusContent
+		},
+		_accessToken,
+		_accessTokenSecret,
+		function(error, data, response) {
+			if (error) {
+				// something went wrong
+			} else {
+				// data contains the data sent by twitter
+			}
+		}
+	);
+
 });
 
 app.listen(config.server.port, function () {
