@@ -2,7 +2,7 @@ module Main exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing ( onClick )
-import Components.Twitter exposing (auth)
+import Components.Twitter exposing (auth, getToken)
 import QueryString exposing (parse, one, string)
 
 -- APP
@@ -15,10 +15,12 @@ init : Flags -> (Model, Cmd Msg)
 init flags =
     let
         params = parse flags.query
-        token = one string "oauth_token" params
-        verifier = one string "oauth_verifier" params
+        authPair = (one string "oauth_token" params, one string "oauth_verifier" params)
     in
-        (Model token verifier, Cmd.none)
+        case authPair of
+            (Just token, Just verifier) ->
+                (Model (Just token) (Just verifier), getToken (token, verifier))
+            _ -> (Model Nothing Nothing, Cmd.none)
 
 type alias Flags = { query : String
 }

@@ -15,7 +15,7 @@ var app = express();
 
 var _requestSecret;
 
-app.get("/request-token", function(req, res) {
+app.get("/request-auth", function(req, res) {
 	twitter.getRequestToken(function(err, requestToken, requestSecret) {
 		console.log(arguments);
 		if (err)
@@ -27,7 +27,7 @@ app.get("/request-token", function(req, res) {
 	});
 });
 
-app.get("/access-token", function(req, res) {
+app.get("/request-token", function(req, res) {
 	var requestToken = req.query.oauth_token,
 		verifier = req.query.oauth_verifier;
 
