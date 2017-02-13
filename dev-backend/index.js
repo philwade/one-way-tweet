@@ -37,12 +37,13 @@ app.get("/request-token", function(req, res) {
 			res.status(500).send(err);
 		else
 			twitter.verifyCredentials(accessToken, accessSecret, function(err, user) {
-				if (err)
+				if (err) {
 					res.status(500).send(err);
-				else
+				} else {
 					_accessToken = accessToken;
 					_accessSecret = accessSecret;
 					res.send(user);
+				}
 			});
 	});
 });

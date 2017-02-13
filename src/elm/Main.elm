@@ -2,7 +2,7 @@ module Main exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing ( onClick )
-import Components.Twitter exposing (auth, getToken, postTweet)
+import Components.Twitter exposing (TwitterUser, auth, getToken, postTweet, gotUser)
 import QueryString exposing (parse, one, string)
 import Components.Message exposing (Msg(..))
 
@@ -20,8 +20,8 @@ init flags =
     in
         case authPair of
             (Just token, Just verifier) ->
-                (Model (Just token) (Just verifier) False, getToken (token, verifier))
-            _ -> (Model Nothing Nothing False, Cmd.none)
+                (Model (Just token) (Just verifier) False Nothing, getToken (token, verifier))
+            _ -> (Model Nothing Nothing False Nothing, Cmd.none)
 
 type alias Flags = { query : String
 }
@@ -29,17 +29,20 @@ type alias Flags = { query : String
 type alias Model = { token : Maybe String
                    , verifier : Maybe String
                    , loading : Bool
+                   , user: Maybe TwitterUser
                    }
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
-    TryAuth -> (model, auth "")
+    TryAuth -> ({ model | loading = True }, auth "")
     AuthSuccess -> (model, Cmd.none)
-    SendTweet -> ({ model | loading = True}, postTweet "placeholder")
+    SendTweet -> ({ model | loading = True }, postTweet "placeholder")
+    GotUser user -> ({ model | user = Just user}, Cmd.none)
 
 subscriptions : Model -> Sub Msg
-subscriptions model = Sub.none
+subscriptions model =
+    gotUser GotUser
 
 
 -- VIEW

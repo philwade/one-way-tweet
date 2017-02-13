@@ -6,12 +6,19 @@ var initialAuth = function () {
 	});
 }
 
-var getToken = function (authPair) {
+var getToken = function (authPair, returnUser) {
 	var [ token, verifier ] = authPair;
 	$.get('/api/request-token', {
 		oauth_token: token,
 		oauth_verifier: verifier
 	}, function(res) {
+    	if(res && res.name && res.screen_name && res.profile_image_url) {
+			returnUser({
+				name: res.name,
+				user_name: res.screen_name,
+				profile_image: res.profile_image_url
+			});
+		}
 		console.log(res);
 	});
 }
