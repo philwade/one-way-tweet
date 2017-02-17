@@ -44,22 +44,46 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     gotUser GotUser
 
+pickDisplay : Model -> Html Msg
+pickDisplay model =
+    case model.user of
+        Just user -> writeTweet
+        Nothing -> signIn
+
+signIn : Html Msg
+signIn =
+      button [ class "mui-btn mui-btn--primary", onClick TryAuth ] [
+        span[ class "glyphicon glyphicon-star" ][]
+        , span[][ text "Sign into twitter" ]
+      ]
+
+writeTweet : Html Msg
+writeTweet =
+    Html.form [ class "mui-form" ] [
+        div [ class "mui-textfield" ] [
+            input [ placeholder "Write a tweet" ] []
+        ]
+        , button [ class "mui-btn mui-btn--primary" ] [ text "Send tweet" ]
+    ]
 
 -- VIEW
 -- Html is defined as: elem [ attribs ][ children ]
 -- CSS can be applied via class names or inline style attrib
 view : Model -> Html Msg
 view model =
-  div [ class "container", style [("margin-top", "30px"), ( "text-align", "center" )] ][    -- inline CSS (literal)
-    div [ class "row" ][
-      div [ class "col-xs-12" ][
-          button [ class "btn btn-primary btn-lg", onClick TryAuth ] [                  -- click handler
-            span[ class "glyphicon glyphicon-star" ][]                                      -- glyphicon
-            , span[][ text "Sign into your twitter!" ]
-          ]
+    let
+        ui = pickDisplay model
+    in
+      div [] [
+        div [ class "mui-appbar" ] [
+            text "app bar"
+        ]
+        , div [ class "mui-container" ][
+            div [ class "col-xs-12" ][
+                ui
+            ]
+        ]
       ]
-    ]
-  ]
 
 -- CSS STYLES
 styles : { img : List ( String, String ) }
