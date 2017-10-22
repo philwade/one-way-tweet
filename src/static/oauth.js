@@ -1,4 +1,4 @@
-var $ = jQuery = require( '../../node_modules/jquery/dist/jquery.js' );           // <--- remove if jQuery not needed
+var $ = jQuery = require( '../../node_modules/jquery/dist/jquery.js' );
 
 var initialAuth = function () {
 	$.get('/api/request-auth', {}, function(res) {

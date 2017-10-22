@@ -1,6 +1,7 @@
 "use strict";
 
 var express = require('express'),
+	cookieParser = require('cookie-parser'),
 	config = require('./config.json'),
 	Twitter = require('node-twitter-api'),
 	secret = require('./secret.json');
@@ -12,9 +13,10 @@ var twitter = new Twitter({
 });
 
 var app = express();
+app.use(cookieParser());
 
-var _requestSecret,
-	_accessToken,
+var _accessToken,
+	_requestSecrets = {}, // keyed against requestTokens
 	_accessSecret;
 
 app.get("/request-auth", function(req, res) {
@@ -22,7 +24,8 @@ app.get("/request-auth", function(req, res) {
 		if (err)
 			res.status(500).send(err);
 		else {
-			_requestSecret = requestSecret;
+			console.log("requestToken", requestToken);
+			_requestSecrets[requestToken] = requestSecret;
 			res.send("https://api.twitter.com/oauth/authenticate?oauth_token=" + requestToken);
 		}
 	});
@@ -30,9 +33,11 @@ app.get("/request-auth", function(req, res) {
 
 app.get("/request-token", function(req, res) {
 	var requestToken = req.query.oauth_token,
+		requestSecret = _requestSecrets[requestToken],
 		verifier = req.query.oauth_verifier;
 
-	twitter.getAccessToken(requestToken, _requestSecret, verifier, function(err, accessToken, accessSecret) {
+	console.log("requestToken in /request-token", requestToken);
+	twitter.getAccessToken(requestToken, requestSecret, verifier, function(err, accessToken, accessSecret) {
 		if (err)
 			res.status(500).send(err);
 		else
@@ -40,8 +45,12 @@ app.get("/request-token", function(req, res) {
 				if (err) {
 					res.status(500).send(err);
 				} else {
+					console.log("accessToken", accessToken);
+					console.log("accessSecret", accessSecret);
 					_accessToken = accessToken;
 					_accessSecret = accessSecret;
+					res.cookie("accessToken", accessToken);
+					res.cookie("accessSecret", accessSecret);
 					res.send(user);
 				}
 			});
@@ -55,7 +64,7 @@ app.get("/post-status", function(req, res) {
 			status: statusContent
 		},
 		_accessToken,
-		_accessTokenSecret,
+		_accessSecret,
 		function(error, data, response) {
 			if (error) {
 				// something went wrong
