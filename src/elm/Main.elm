@@ -1,15 +1,15 @@
 module Main exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing ( onClick )
-import Components.Twitter exposing (TwitterUser, auth, getToken, postTweet, gotUser)
+import Html.Events exposing ( onClick, onInput )
+import Components.Twitter exposing (TwitterUser, auth, getToken, trySendTweet, gotUser)
 import QueryString exposing (parse, one, string)
 import Components.Message exposing (Msg(..))
 
 -- APP
 main : Program Flags Model Msg
 main =
-  Html.programWithFlags { init = init, view = view, update = update, subscriptions = subscriptions }
+    Html.programWithFlags { init = init, view = view, update = update, subscriptions = subscriptions }
 
 -- MODEL
 init : Flags -> (Model, Cmd Msg)
@@ -20,8 +20,8 @@ init flags =
     in
         case authPair of
             (Just token, Just verifier) ->
-                (Model (Just token) (Just verifier) False Nothing, getToken (token, verifier))
-            _ -> (Model Nothing Nothing False Nothing, Cmd.none)
+                (Model (Just token) (Just verifier) False Nothing Nothing, getToken (token, verifier))
+            _ -> (Model Nothing Nothing False Nothing Nothing, Cmd.none)
 
 type alias Flags = { query : String
 }
@@ -29,7 +29,8 @@ type alias Flags = { query : String
 type alias Model = { token : Maybe String
                    , verifier : Maybe String
                    , loading : Bool
-                   , user: Maybe TwitterUser
+                   , user : Maybe TwitterUser
+                   , tweetBody : Maybe String
                    }
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -37,8 +38,9 @@ update msg model =
   case msg of
     TryAuth -> ({ model | loading = True }, auth "")
     AuthSuccess -> (model, Cmd.none)
-    SendTweet -> ({ model | loading = True }, postTweet "placeholder")
+    SendTweet -> ({ model | loading = True }, trySendTweet model.tweetBody)
     GotUser user -> ({ model | user = Just user}, Cmd.none)
+    TweetValue value -> ({model | tweetBody = Just value}, Cmd.none)
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -59,11 +61,11 @@ signIn =
 
 writeTweet : Html Msg
 writeTweet =
-    Html.form [ class "mui-form" ] [
+    div [ class "mui-form" ] [
         div [ class "mui-textfield" ] [
-            input [ placeholder "Write a tweet" ] []
+            input [ placeholder "Write a tweet", onInput TweetValue ] []
         ]
-        , button [ class "mui-btn mui-btn--primary" ] [ text "Send tweet" ]
+        , button [ class "mui-btn mui-btn--primary", onClick SendTweet ] [ text "Send tweet" ]
     ]
 
 -- VIEW

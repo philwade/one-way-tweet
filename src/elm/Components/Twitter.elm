@@ -12,3 +12,11 @@ type alias TwitterUser = { name: String
                          , user_name: String
                          , profile_image: String
                          }
+
+trySendTweet : Maybe String -> Cmd msg
+trySendTweet tweet =
+    case tweet of
+        Nothing ->
+            Cmd.none
+        Just value ->
+            postTweet value

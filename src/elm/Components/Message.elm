@@ -5,3 +5,4 @@ type Msg = TryAuth
          | AuthSuccess
          | SendTweet
          | GotUser TwitterUser
+         | TweetValue String

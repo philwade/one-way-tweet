@@ -50,6 +50,7 @@ app.get("/request-token", function(req, res) {
 });
 
 app.get("/post-status", function(req, res) {
+	console.log(req);
 	var statusContent = req.query.status,
 		accessToken = req.cookies.accessToken,
 		accessSecret = req.cookies.accessSecret;
@@ -61,9 +62,11 @@ app.get("/post-status", function(req, res) {
 		accessSecret,
 		function(error, data, response) {
 			if (error) {
+				console.log(error);
 				// something went wrong
 			} else {
 				// data contains the data sent by twitter
+				res.send(data);
 			}
 		}
 	);

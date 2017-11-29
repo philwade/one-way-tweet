@@ -24,6 +24,7 @@ var getToken = function (authPair, returnUser) {
 }
 
 var postTweet = function(status) {
+	console.log(status);
 	$.get('/api/post-status', {
 		status
 	}, function(res) {
