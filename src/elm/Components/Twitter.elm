@@ -20,3 +20,13 @@ trySendTweet tweet =
             Cmd.none
         Just value ->
             postTweet value
+
+inValidTweet : Maybe String -> Bool
+inValidTweet tweet =
+    case tweet of
+        Nothing -> True
+        Just value ->
+            let
+                len = String.length value
+            in
+                len <= 0 || len > 280

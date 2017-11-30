@@ -2,7 +2,7 @@ module Main exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing ( onClick, onInput )
-import Components.Twitter exposing (TwitterUser, auth, getToken, trySendTweet, gotUser)
+import Components.Twitter exposing (TwitterUser, auth, getToken, trySendTweet, gotUser, inValidTweet)
 import QueryString exposing (parse, one, string)
 import Components.Message exposing (Msg(..))
 
@@ -49,7 +49,7 @@ subscriptions model =
 pickDisplay : Model -> Html Msg
 pickDisplay model =
     case model.user of
-        Just user -> writeTweet
+        Just user -> writeTweet model.tweetBody
         Nothing -> signIn
 
 signIn : Html Msg
@@ -59,13 +59,13 @@ signIn =
         , span[][ text "Sign into twitter" ]
       ]
 
-writeTweet : Html Msg
-writeTweet =
+writeTweet : Maybe String -> Html Msg
+writeTweet tweetBody =
     div [ class "mui-form" ] [
         div [ class "mui-textfield" ] [
             input [ placeholder "Write a tweet", onInput TweetValue ] []
         ]
-        , button [ class "mui-btn mui-btn--primary", onClick SendTweet ] [ text "Send tweet" ]
+        , button [ class "mui-btn mui-btn--primary", onClick SendTweet, disabled (inValidTweet tweetBody) ] [ text "Send tweet" ]
     ]
 
 -- VIEW
