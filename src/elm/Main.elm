@@ -65,6 +65,7 @@ writeTweet tweetBody =
         div [ class "mui-textfield" ] [
             input [ placeholder "Write a tweet", onInput TweetValue ] []
         ]
+        , div [ class "mui--text-right" ] [ text (Maybe.withDefault "" tweetBody |> String.length |> toString) ]
         , button [ class "mui-btn mui-btn--primary", onClick SendTweet, disabled (inValidTweet tweetBody) ] [ text "Send tweet" ]
     ]
 
