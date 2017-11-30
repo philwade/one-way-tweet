@@ -2,7 +2,7 @@ module Main exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing ( onClick, onInput )
-import Components.Twitter exposing (TwitterUser, auth, getToken, trySendTweet, gotUser, inValidTweet)
+import Components.Twitter exposing (TwitterUser, auth, getToken, trySendTweet, gotUser, invalidTweet)
 import QueryString exposing (parse, one, string)
 import Components.Message exposing (Msg(..))
 
@@ -65,8 +65,15 @@ writeTweet tweetBody =
         div [ class "mui-textfield" ] [
             input [ placeholder "Write a tweet", onInput TweetValue ] []
         ]
-        , div [ class "mui--text-right" ] [ text (Maybe.withDefault "" tweetBody |> String.length |> toString) ]
-        , button [ class "mui-btn mui-btn--primary", onClick SendTweet, disabled (inValidTweet tweetBody) ] [ text "Send tweet" ]
+        , span [ classList [ ("mui--pull-right", True)
+                           , ("mui--text-danger", (invalidTweet tweetBody))
+                           ] ]
+                           [ text (Maybe.withDefault "" tweetBody |> String.length |> toString) ]
+        , button [ class "mui-btn mui-btn--primary"
+                 , onClick SendTweet
+                 , disabled (invalidTweet tweetBody)
+                 ]
+                 [ text "Send tweet" ]
     ]
 
 -- VIEW

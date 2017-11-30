@@ -21,8 +21,8 @@ trySendTweet tweet =
         Just value ->
             postTweet value
 
-inValidTweet : Maybe String -> Bool
-inValidTweet tweet =
+invalidTweet : Maybe String -> Bool
+invalidTweet tweet =
     case tweet of
         Nothing -> True
         Just value ->
