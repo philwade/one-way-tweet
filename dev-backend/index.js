@@ -73,6 +73,19 @@ app.get("/post-status", function(req, res) {
 
 });
 
+app.get("/get-user", function(req, res) {
+	var accessToken = req.cookies.accessToken,
+		accessSecret = req.cookies.accessSecret;
+
+	twitter.verifyCredentials(accessToken, accessSecret, function(err, user) {
+		if (err) {
+			res.status(500).send(err);
+		} else {
+			res.send(user);
+		}
+	});
+});
+
 app.listen(config.server.port, function () {
 	console.log("Listening on " + config.server.port + "...");
 });

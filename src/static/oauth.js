@@ -32,12 +32,32 @@ var postTweet = function(status) {
 	});
 }
 
+var haveCookies = function() {
+	return document.cookie.includes("accessToken") && document.cookie.includes("accessSecret");
+}
+
+var haveUser = function(returnUser) {
+	if(haveCookies()) {
+		$.get('/api/get-user', {},
+		function(res) {
+			if(res && res.name && res.screen_name && res.profile_image_url) {
+				returnUser({
+					name: res.name,
+					user_name: res.screen_name,
+					profile_image: res.profile_image_url
+				});
+			}
+		});
+	}
+}
+
 if ( typeof define === "function" && define.amd ) {
 	define( "oauth", [], function() {
 		return {
 			initialAuth,
 			getToken,
-			postTweet
+			postTweet,
+			haveUser
 		}
 	} );
 }
