@@ -63,7 +63,7 @@ writeTweet : Maybe String -> Html Msg
 writeTweet tweetBody =
     div [ class "mui-form" ] [
         div [ class "mui-textfield" ] [
-            input [ placeholder "Write a tweet", onInput TweetValue ] []
+            textarea [ placeholder "Write a tweet", onInput TweetValue ] []
         ]
         , span [ classList [ ("mui--pull-right", True)
                            , ("mui--text-danger", (invalidTweet tweetBody))
@@ -76,6 +76,29 @@ writeTweet tweetBody =
                  [ text "Send tweet" ]
     ]
 
+userDisplay : Model -> Html Msg
+userDisplay model =
+    case model.user of
+        Just user -> img [ src user.profile_image ] []
+        Nothing -> text ""
+
+appBar : Model -> Html Msg
+appBar model =
+        div [ class "mui-appbar navbar" ] [
+            div [ class "mui-container" ][
+                table [] [
+                    tr [ class "mui--appbar-height" ] [
+                        td [ class "mui--text-title" ] [
+                            text "One Way Tweet"
+                        ]
+                        , td [ class "mui--text-right" ] [
+                            userDisplay model
+                        ]
+                    ]
+                ]
+            ]
+        ]
+
 -- VIEW
 -- Html is defined as: elem [ attribs ][ children ]
 -- CSS can be applied via class names or inline style attrib
@@ -85,8 +108,9 @@ view model =
         ui = pickDisplay model
     in
       div [] [
-        div [ class "mui-appbar" ] [
-            text "app bar"
+        appBar model
+        , div [ classList [("progress", True), ("mui--hide", not model.loading)] ] [
+            div [ class "indeterminate" ] [ ]
         ]
         , div [ class "mui-container" ][
             div [ class "col-xs-12" ][
