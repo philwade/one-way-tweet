@@ -1,10 +1,27 @@
+@import "../../../node_modules/muicss/lib/sass/mui.scss";
+@import "../../../node_modules/muicss/lib/sass/mui-colors.scss";
 
-// can add Boostrap overrides, additional Sass/CSS below...
+$color-scheme: 'blue-grey';
+$primary-color: mui-color($color-scheme, '600');
+$secondary-color: mui-color($color-scheme, '300');
+$tertiary-color: mui-color($color-scheme, '100');
 
 .navbar {
 	table {
 		width: 100%;
 	}
+
+	&.mui-appbar {
+		background-color: $primary-color;
+	}
+}
+
+.mui-btn--primary {
+	background-color: $primary-color;
+}
+
+.mui-textfield > input:focus, .mui-textfield > textarea:focus {
+	border-color: $primary-color;
 }
 
 .hidden {
@@ -17,14 +34,14 @@
 	height: 4px;
 	display: block;
 	width: 100%;
-	background-color: #acece6;
+	background-color: $tertiary-color;
 	border-radius: 2px;
 	background-clip: padding-box;
 	margin: 0 0 1rem 0;
 	overflow: hidden;
 
 	.indeterminate {
-		background-color: #26a69a;
+		background-color: $secondary-color;
 	}
 
 	.indeterminate:before {

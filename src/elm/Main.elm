@@ -49,7 +49,7 @@ subscriptions model =
 pickDisplay : Model -> Html Msg
 pickDisplay model =
     case model.user of
-        Just user -> writeTweet model.tweetBody
+        Just user -> writeTweet model.tweetBody model.loading
         Nothing -> signIn
 
 signIn : Html Msg
@@ -59,11 +59,14 @@ signIn =
         , span[][ text "Sign into twitter" ]
       ]
 
-writeTweet : Maybe String -> Html Msg
-writeTweet tweetBody =
+writeTweet : Maybe String -> Bool -> Html Msg
+writeTweet tweetBody loading =
     div [ class "mui-form" ] [
         div [ class "mui-textfield" ] [
-            textarea [ placeholder "Write a tweet", onInput TweetValue ] []
+            textarea [ placeholder "Write a tweet"
+                     , onInput TweetValue
+                     , disabled loading
+                     ] []
         ]
         , span [ classList [ ("mui--pull-right", True)
                            , ("mui--text-danger", (invalidTweet tweetBody))
@@ -71,7 +74,7 @@ writeTweet tweetBody =
                            [ text (Maybe.withDefault "" tweetBody |> String.length |> toString) ]
         , button [ class "mui-btn mui-btn--primary"
                  , onClick SendTweet
-                 , disabled (invalidTweet tweetBody)
+                 , disabled ((invalidTweet tweetBody) || loading)
                  ]
                  [ text "Send tweet" ]
     ]
@@ -118,13 +121,3 @@ view model =
             ]
         ]
       ]
-
--- CSS STYLES
-styles : { img : List ( String, String ) }
-styles =
-  {
-    img =
-      [ ( "width", "33%" )
-      , ( "border", "4px solid #337AB7")
-      ]
-  }
