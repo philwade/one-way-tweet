@@ -64,9 +64,12 @@ app.get("/post-status", function(req, res) {
 			if (error) {
 				console.log(error);
 				// something went wrong
+				var data = error.data;
+				var obj = JSON.parse(data);
+				res.send({ message: obj.errors[0].message, success: false });
 			} else {
 				// data contains the data sent by twitter
-				res.send(data);
+				res.send({ data, success: true });
 			}
 		}
 	);

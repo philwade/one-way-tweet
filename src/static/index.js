@@ -10,7 +10,11 @@ app.ports.auth.subscribe(oauth.initialAuth);
 app.ports.getToken.subscribe(function(authPair) {
 	oauth.getToken(authPair, function(u) { console.log(u); app.ports.gotUser.send(u); });
 });
-app.ports.postTweet.subscribe(oauth.postTweet);
+app.ports.postTweet.subscribe(function(tweet) {
+	oauth.postTweet(tweet, function(res) {
+		app.ports.tweetSendResult.send(res);
+	});
+});
 oauth.haveUser(function(user) {
 	app.ports.gotUser.send(user);
 });

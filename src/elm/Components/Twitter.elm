@@ -6,6 +6,7 @@ type alias TokenBundle = (String, String)
 port getToken : TokenBundle -> Cmd msg
 port postTweet : String -> Cmd msg
 port gotUser : (TwitterUser -> msg) -> Sub msg
+port tweetSendResult : (Maybe String -> msg) -> Sub msg
 
 -- A simplified version of the twitter use object
 type alias TwitterUser = { name: String

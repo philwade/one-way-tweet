@@ -23,12 +23,16 @@ var getToken = function (authPair, returnUser) {
 	});
 }
 
-var postTweet = function(status) {
-	console.log(status);
+var postTweet = function(status, callback) {
 	$.get('/api/post-status', {
 		status
 	}, function(res) {
 		console.log(res);
+		if(res.success) {
+			callback(null);
+		} else {
+			callback(res.message);
+		}
 	});
 }
 

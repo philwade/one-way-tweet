@@ -6,3 +6,4 @@ type Msg = TryAuth
          | SendTweet
          | GotUser TwitterUser
          | TweetValue String
+         | TweetSendStatus (Maybe String)
