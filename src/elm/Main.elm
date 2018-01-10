@@ -5,6 +5,7 @@ import Html.Events exposing ( onClick, onInput )
 import Components.Twitter exposing (TwitterUser, auth, getToken, trySendTweet, gotUser, invalidTweet, tweetSendResult)
 import QueryString exposing (parse, one, string)
 import Components.Message exposing (Msg(..))
+import Time exposing (every, second)
 
 -- APP
 main : Program Flags Model Msg
@@ -31,7 +32,7 @@ type alias Model = { token : Maybe String
                    , loading : Bool
                    , user : Maybe TwitterUser
                    , tweetBody : Maybe String
-                   , error : Maybe String
+                   , actionMessage : Maybe String
                    }
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -42,14 +43,22 @@ update msg model =
     SendTweet -> ({ model | loading = True }, trySendTweet model.tweetBody)
     GotUser user -> ({ model | user = Just user}, Cmd.none)
     TweetValue value -> ({model | tweetBody = Just value}, Cmd.none)
-    TweetSendStatus Nothing -> ({model | tweetBody = Nothing, loading = False}, Cmd.none)
-    TweetSendStatus (Just err) -> ({model | error = Just err, loading = False}, Cmd.none)
+    TweetSendStatus Nothing -> ({model | actionMessage = Just "Tweet sent", tweetBody = Nothing, loading = False}, Cmd.none)
+    TweetSendStatus (Just err) -> ({model | actionMessage = Just err, loading = False}, Cmd.none)
+    ClearMessage _ -> ({ model | actionMessage = Nothing}, Cmd.none)
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.batch [ gotUser GotUser
-              , tweetSendResult TweetSendStatus
-              ]
+    case model.actionMessage of
+        Nothing ->
+            Sub.batch [ gotUser GotUser
+                      , tweetSendResult TweetSendStatus
+                      ]
+        Just _ ->
+            Sub.batch [ gotUser GotUser
+                      , tweetSendResult TweetSendStatus
+                      , every (second * 5) ClearMessage
+                      ]
 
 pickDisplay : Model -> Html Msg
 pickDisplay model =
@@ -126,4 +135,7 @@ view model =
                 ui
             ]
         ]
+        , div [ id "toast", classList [("show", not <| model.actionMessage == Nothing)]  ]
+            [ div [ id "desc" ] [ text <| Maybe.withDefault "" model.actionMessage ]
+            ]
       ]
