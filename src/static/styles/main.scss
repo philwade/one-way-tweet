@@ -18,6 +18,10 @@ $tertiary-color: mui-color($color-scheme, '100');
 
 .mui-btn--primary {
 	background-color: $primary-color;
+
+	&:hover {
+		background-color: $secondary-color;
+	}
 }
 
 .mui-textfield > input:focus, .mui-textfield > textarea:focus {
