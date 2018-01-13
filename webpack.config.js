@@ -29,7 +29,7 @@ var commonConfig = {
 
   module: {
     noParse: /\.elm$/,
-	rules: [
+    rules: [
       {
         test: /\.(eot|ttf|woff|woff2|svg)$/,
         loader: 'file-loader'
@@ -62,12 +62,12 @@ if ( TARGET_ENV === 'development' ) {
       // serve index.html in place of 404 responses
       historyApiFallback: true,
       contentBase: './src',
-	  proxy: {
-		'/api/**' : {
-			target: 'http://localhost:5000',
-			pathRewrite: function(path) { return path.replace(/^\/[^\/]+\//, '')}
-		}
-	  }
+      proxy: {
+        '/api/**' : {
+          target: 'http://localhost:5000',
+          pathRewrite: function(path) { return path.replace(/^\/[^\/]+\//, '')}
+        }
+      }
     },
 
     module: {
@@ -75,10 +75,10 @@ if ( TARGET_ENV === 'development' ) {
         {
           test:    /\.elm$/,
           exclude: [/elm-stuff/, /node_modules/],
-		  use: [
-          	'elm-hot-loader',
-          	'elm-webpack-loader?verbose=true&warn=true&debug=true'
-		  ]
+      use: [
+            'elm-hot-loader',
+            'elm-webpack-loader?verbose=true&warn=true&debug=true'
+      ]
         },
         {
           test: /\.(css|scss)$/,
@@ -112,12 +112,22 @@ if ( TARGET_ENV === 'production' ) {
         },
         {
           test: /\.(css|scss)$/,
-		  use: [
-			'style-loader',
-			'css-loader',
+          use: [
+            'style-loader',
+            'css-loader',
             'postcss-loader',
             'sass-loader'
           ]
+        },
+        {
+          test: /\.js$/,
+          exclude: /(node_modules|bower_components)/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+                presets: ['@babel/preset-env']
+            }
+          }
         }
       ]
     },
