@@ -14,9 +14,11 @@
     "reinstall": "npm i rimraf && rimraf node_modules && npm uninstall -g elm && npm i -g elm && npm i && elm package install"
   },
   "devDependencies": {
+    "@babel/core": "^7.0.0-beta.37",
+    "@babel/preset-env": "^7.0.0-beta.37",
     "autoprefixer": "^6.3.6",
     "babel-core": "^6.26.0",
-    "babel-loader": "^7.1.2",
+    "babel-loader": "^8.0.0-beta.0",
     "babel-preset-env": "^1.6.1",
     "copy-webpack-plugin": "^4.0.1",
     "css-loader": "^0.26.1",
