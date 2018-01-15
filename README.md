@@ -2,7 +2,7 @@
 
 ### About:
 One Way Tweet is a simple web based twitter client that only allows sending tweets. Why would you want that? If you like writing tweets but don't want
-to get sucked into twitter every time you write one, like me. You can see it running at: [http://one-way-tweet.philwade.org] (http://one-way-tweet.philwade.org)
+to get sucked into twitter every time you write one, like me. You can see it running at: http://one-way-tweet.philwade.org.
 It's written with Elm, javascript and a node backend.
 
 
