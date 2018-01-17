@@ -9,3 +9,4 @@ type Msg = TryAuth
          | TweetValue String
          | TweetSendStatus (Maybe String)
          | ClearMessage Time
+         | ToggleAbout

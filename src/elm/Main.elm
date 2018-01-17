@@ -21,8 +21,8 @@ init flags =
     in
         case authPair of
             (Just token, Just verifier) ->
-                (Model (Just token) (Just verifier) False Nothing Nothing Nothing, getToken (token, verifier))
-            _ -> (Model Nothing Nothing False Nothing Nothing Nothing, Cmd.none)
+                (Model (Just token) (Just verifier) False Nothing Nothing Nothing False, getToken (token, verifier))
+            _ -> (Model Nothing Nothing False Nothing Nothing Nothing False, Cmd.none)
 
 type alias Flags = { query : String
 }
@@ -33,6 +33,7 @@ type alias Model = { token : Maybe String
                    , user : Maybe TwitterUser
                    , tweetBody : Maybe String
                    , actionMessage : Maybe String
+                   , showAbout : Bool
                    }
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -46,6 +47,7 @@ update msg model =
     TweetSendStatus Nothing -> ({model | actionMessage = Just "Tweet sent", tweetBody = Nothing, loading = False}, Cmd.none)
     TweetSendStatus (Just err) -> ({model | actionMessage = Just err, loading = False}, Cmd.none)
     ClearMessage _ -> ({ model | actionMessage = Nothing}, Cmd.none)
+    ToggleAbout -> ({ model | showAbout = not model.showAbout }, Cmd.none)
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -94,6 +96,25 @@ writeTweet tweetBody loading =
                  [ text "Send tweet" ]
     ]
 
+outputModal : Model -> Html Msg
+outputModal model =
+    div [ classList
+            [ ("modal", True)
+            , ("hidden", not model.showAbout)
+            ]
+        ]
+        [ div
+            [ class "modal-content" ]
+            [ span [ class "close-modal" ] [ a [ onClick ToggleAbout ] [ text "X" ] ]
+            , text "One way tweet is a bare-bones twitter client that just sends tweets. It solves the problem I had where I wanted to write tweets but also wanted to avoid losing focus and reading twitter for the rest of the day. I hope you find it useful. Here are some ways to learn more and send me questions and comments:"
+            , a [ href "mailto:phil@philwade.org", class "modal-link" ] [ text "Email" ]
+            , a [ href "http://twitter.com/phil_wade", class "modal-link" ] [ text "Twitter" ]
+            , a [ href "http://philwade.org", class "modal-link" ] [ text "Website" ]
+            , a [ href "https://github.com/philwade/one-way-tweet", class "modal-link" ] [ text "Github" ]
+            , button [ class "ok mui-btn mui-btn--primary", onClick ToggleAbout ] [ text "ok" ]
+            ]
+        ]
+
 userDisplay : Model -> Html Msg
 userDisplay model =
     case model.user of
@@ -134,8 +155,13 @@ view model =
             div [ class "col-xs-12" ][
                 ui
             ]
+        , button [ class "mui-btn mui-btn--primary"
+                 , onClick ToggleAbout
+                 ]
+                 [ text "About" ]
         ]
         , div [ id "toast", classList [("show", not <| model.actionMessage == Nothing)]  ]
             [ div [ id "desc" ] [ text <| Maybe.withDefault "" model.actionMessage ]
             ]
+        , outputModal model
       ]
