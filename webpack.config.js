@@ -141,6 +141,9 @@ if ( TARGET_ENV === 'production' ) {
         {
           from: 'src/favicon.ico'
         },
+        {
+          from: 'src/favicon.png'
+        }
       ]),
 
       // extract CSS into a separate file
